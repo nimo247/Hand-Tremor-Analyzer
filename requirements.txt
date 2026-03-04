@@ -1,0 +1,9 @@
+```
+mediapipe
+opencv-python-headless
+numpy
+scipy
+streamlit
+reportlab
+matplotlib
+```
