@@ -2,16 +2,28 @@ name: Deploy to Hugging Face
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Push to Hugging Face
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0        # ← fixes "shallow update not allowed"
+          lfs: true
+
+      - name: Install Git LFS
+        run: |
+          git lfs install       # ← fixes lfs-check error
+
+      - name: Push to Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git remote add hf https://USER:$HF_TOKEN@huggingface.co/spaces/nimo247/hand-tremor-analyzer
+          git config --global user.email "deploy@github.com"
+          git config --global user.name "GitHub Actions"
+          git remote add hf https://nimo247:$HF_TOKEN@huggingface.co/spaces/nimo247/hand-tremor-analyzer
           git push hf main --force
